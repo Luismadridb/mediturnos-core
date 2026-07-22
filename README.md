@@ -71,6 +71,6 @@ Luego abre el reporte en: `target/site/jacoco/index.html`
 
 Luis Madrid B. — [github.com/Luismadridb](https://github.com/Luismadridb)
 
-## Coverage
+## Cobertura de tests
 
-![alt text](<Sin título-1.png>)# mediturnos-core
+![Cobertura JaCoCo](docs/coverage.png)
