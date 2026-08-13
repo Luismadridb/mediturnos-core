@@ -1,4 +1,4 @@
-package cl.lmb.mediturnos.domain;
+package cl.lmb.mediturnos.domain.entity;
 
 /**
  * Especialidades medicas soportadas por el sistema.

@@ -1,4 +1,4 @@
-package cl.lmb.mediturnos.exception;
+package cl.lmb.mediturnos.domain.exception;
 
 /**
  * Se lanza cuando se intenta confirmar o cancelar un turno que ya se encuentra cancelado.

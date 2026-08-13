@@ -1,7 +1,7 @@
-package cl.lmb.mediturnos.domain;
+package cl.lmb.mediturnos.domain.entity;
 
-import cl.lmb.mediturnos.exception.TurnoInvalidoException;
-import cl.lmb.mediturnos.exception.TurnoYaCanceladoException;
+import cl.lmb.mediturnos.domain.exception.TurnoInvalidoException;
+import cl.lmb.mediturnos.domain.exception.TurnoYaCanceladoException;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

@@ -1,4 +1,4 @@
-package cl.lmb.mediturnos.exception;
+package cl.lmb.mediturnos.domain.exception;
 
 /**
  * Excepcion base para todas las reglas de negocio del dominio MediTurnos.

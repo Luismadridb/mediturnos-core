@@ -1,4 +1,4 @@
-package cl.lmb.mediturnos.domain;
+package cl.lmb.mediturnos.domain.entity;
 
 import org.junit.jupiter.api.Test;
 

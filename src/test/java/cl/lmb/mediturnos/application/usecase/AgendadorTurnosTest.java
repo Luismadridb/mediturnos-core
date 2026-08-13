@@ -1,15 +1,17 @@
-package cl.lmb.mediturnos.service;
+package cl.lmb.mediturnos.application.usecase;
 
-import cl.lmb.mediturnos.domain.Especialidad;
-import cl.lmb.mediturnos.domain.Medico;
-import cl.lmb.mediturnos.domain.Paciente;
-import cl.lmb.mediturnos.domain.Turno;
-import cl.lmb.mediturnos.exception.CapacidadExcedidaException;
-import cl.lmb.mediturnos.exception.MedicoNoDisponibleException;
-import cl.lmb.mediturnos.exception.TurnoInvalidoException;
-import cl.lmb.mediturnos.exception.TurnoYaCanceladoException;
-import cl.lmb.mediturnos.port.AgendaMedica;
-import cl.lmb.mediturnos.port.NotificadorTurno;
+import cl.lmb.mediturnos.domain.entity.Especialidad;
+import cl.lmb.mediturnos.domain.entity.Medico;
+import cl.lmb.mediturnos.domain.entity.Paciente;
+import cl.lmb.mediturnos.domain.entity.Turno;
+import cl.lmb.mediturnos.domain.exception.CapacidadExcedidaException;
+import cl.lmb.mediturnos.domain.exception.MedicoNoDisponibleException;
+import cl.lmb.mediturnos.domain.exception.TurnoInvalidoException;
+import cl.lmb.mediturnos.domain.exception.TurnoYaCanceladoException;
+import cl.lmb.mediturnos.domain.port.AgendaMedica;
+import cl.lmb.mediturnos.domain.port.NotificadorTurno;
+import cl.lmb.mediturnos.domain.repository.TurnoRepository;
+import cl.lmb.mediturnos.domain.valueobject.Rut;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +19,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Clock;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -42,6 +43,9 @@ class AgendadorTurnosTest {
     @Mock
     private NotificadorTurno notificadorTurno;
 
+    @Mock
+    private TurnoRepository turnoRepository;
+
     private Clock clock;
     private Paciente paciente;
     private Medico medico;
@@ -51,9 +55,9 @@ class AgendadorTurnosTest {
     void setUp() {
         // Arrange comun: reloj fijo para tener fechas deterministas en los tests
         clock = Clock.fixed(AHORA.atZone(ZONA).toInstant(), ZONA);
-        paciente = new Paciente("P1", "Luis Madrid", "11.111.111-1");
+        paciente = new Paciente("P1", "Luis Madrid", new Rut("11.111.111-1"));
         medico = new Medico("M1", "Dra. Fernanda Soto", Especialidad.BRONCOPULMONAR, 2);
-        agendador = new AgendadorTurnos(agendaMedica, notificadorTurno, clock, () -> "T-FIJO");
+        agendador = new AgendadorTurnos(agendaMedica, notificadorTurno, turnoRepository, clock, () -> "T-FIJO");
     }
 
     @Test
@@ -73,6 +77,7 @@ class AgendadorTurnosTest {
         assertEquals(medico, turno.getMedico());
         verify(agendaMedica, times(1)).estaDisponible(medico, fecha);
         verify(agendaMedica, times(1)).turnosAgendadosEnElDia(medico, fecha);
+        verify(turnoRepository, times(1)).guardar(turno);
     }
 
     @Test
@@ -81,6 +86,7 @@ class AgendadorTurnosTest {
         assertThrows(TurnoInvalidoException.class,
                 () -> agendador.agendar(null, medico, AHORA.plusDays(1)));
         verify(agendaMedica, never()).estaDisponible(any(), any());
+        verify(turnoRepository, never()).guardar(any());
     }
 
     @Test
@@ -127,6 +133,7 @@ class AgendadorTurnosTest {
         assertThrows(MedicoNoDisponibleException.class,
                 () -> agendador.agendar(paciente, medico, fecha));
         verify(agendaMedica, never()).turnosAgendadosEnElDia(any(), any());
+        verify(turnoRepository, never()).guardar(any());
     }
 
     @Test
@@ -139,6 +146,7 @@ class AgendadorTurnosTest {
         // Act / Assert
         assertThrows(CapacidadExcedidaException.class,
                 () -> agendador.agendar(paciente, medico, fecha));
+        verify(turnoRepository, never()).guardar(any());
     }
 
     @Test
@@ -207,8 +215,9 @@ class AgendadorTurnosTest {
 
     @Test
     void constructorSimplificadoDeberiaGenerarUnIdNoNuloAlAgendar() {
-        // Arrange: se usa el constructor de 3 argumentos (generador de id por defecto)
-        AgendadorTurnos agendadorPorDefecto = new AgendadorTurnos(agendaMedica, notificadorTurno, clock);
+        // Arrange: se usa el constructor de 4 argumentos (generador de id por defecto)
+        AgendadorTurnos agendadorPorDefecto =
+                new AgendadorTurnos(agendaMedica, notificadorTurno, turnoRepository, clock);
         LocalDateTime fecha = AHORA.plusDays(1);
         when(agendaMedica.estaDisponible(medico, fecha)).thenReturn(true);
         when(agendaMedica.turnosAgendadosEnElDia(medico, fecha)).thenReturn(0);
@@ -223,12 +232,14 @@ class AgendadorTurnosTest {
     @Test
     void deberiaRechazarDependenciasNulasEnElConstructor() {
         assertThrows(NullPointerException.class,
-                () -> new AgendadorTurnos(null, notificadorTurno, clock));
+                () -> new AgendadorTurnos(null, notificadorTurno, turnoRepository, clock));
         assertThrows(NullPointerException.class,
-                () -> new AgendadorTurnos(agendaMedica, null, clock));
+                () -> new AgendadorTurnos(agendaMedica, null, turnoRepository, clock));
         assertThrows(NullPointerException.class,
-                () -> new AgendadorTurnos(agendaMedica, notificadorTurno, null));
+                () -> new AgendadorTurnos(agendaMedica, notificadorTurno, null, clock));
         assertThrows(NullPointerException.class,
-                () -> new AgendadorTurnos(agendaMedica, notificadorTurno, clock, null));
+                () -> new AgendadorTurnos(agendaMedica, notificadorTurno, turnoRepository, null));
+        assertThrows(NullPointerException.class,
+                () -> new AgendadorTurnos(agendaMedica, notificadorTurno, turnoRepository, clock, null));
     }
 }

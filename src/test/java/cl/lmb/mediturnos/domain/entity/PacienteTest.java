@@ -1,4 +1,7 @@
-package cl.lmb.mediturnos.domain;
+package cl.lmb.mediturnos.domain.entity;
+
+import cl.lmb.mediturnos.domain.exception.TurnoInvalidoException;
+import cl.lmb.mediturnos.domain.valueobject.Rut;
 
 import org.junit.jupiter.api.Test;
 
@@ -11,37 +14,38 @@ class PacienteTest {
     @Test
     void deberiaCrearPacienteValido() {
         // Act
-        Paciente paciente = new Paciente("P1", "Luis Madrid", "11.111.111-1");
+        Paciente paciente = new Paciente("P1", "Luis Madrid", new Rut("11.111.111-1"));
 
         // Assert
         assertEquals("P1", paciente.getId());
         assertEquals("Luis Madrid", paciente.getNombreCompleto());
-        assertEquals("11.111.111-1", paciente.getRut());
+        assertEquals("11111111-1", paciente.getRut().valor());
     }
 
     @Test
     void deberiaLanzarExcepcionSiIdEsNuloOVacio() {
-        assertThrows(IllegalArgumentException.class, () -> new Paciente(null, "Luis Madrid", "11.111.111-1"));
-        assertThrows(IllegalArgumentException.class, () -> new Paciente(" ", "Luis Madrid", "11.111.111-1"));
+        Rut rutValido = new Rut("11.111.111-1");
+        assertThrows(IllegalArgumentException.class, () -> new Paciente(null, "Luis Madrid", rutValido));
+        assertThrows(IllegalArgumentException.class, () -> new Paciente(" ", "Luis Madrid", rutValido));
     }
 
     @Test
     void deberiaLanzarExcepcionSiNombreEsNuloOVacio() {
-        assertThrows(IllegalArgumentException.class, () -> new Paciente("P1", null, "11.111.111-1"));
-        assertThrows(IllegalArgumentException.class, () -> new Paciente("P1", " ", "11.111.111-1"));
+        Rut rutValido = new Rut("11.111.111-1");
+        assertThrows(IllegalArgumentException.class, () -> new Paciente("P1", null, rutValido));
+        assertThrows(IllegalArgumentException.class, () -> new Paciente("P1", " ", rutValido));
     }
 
     @Test
-    void deberiaLanzarExcepcionSiRutEsNuloOVacio() {
+    void deberiaLanzarExcepcionSiRutEsNulo() {
         assertThrows(IllegalArgumentException.class, () -> new Paciente("P1", "Luis Madrid", null));
-        assertThrows(IllegalArgumentException.class, () -> new Paciente("P1", "Luis Madrid", " "));
     }
 
     @Test
     void dosPacientesConElMismoIdDeberianSerIguales() {
         // Arrange
-        Paciente pacienteA = new Paciente("P1", "Luis Madrid", "11.111.111-1");
-        Paciente pacienteB = new Paciente("P1", "Otro Nombre", "22.222.222-2");
+        Paciente pacienteA = new Paciente("P1", "Luis Madrid", new Rut("11.111.111-1"));
+        Paciente pacienteB = new Paciente("P1", "Otro Nombre", new Rut("22.222.222-2"));
 
         // Act / Assert
         assertEquals(pacienteA, pacienteB);
