@@ -1,5 +1,4 @@
-package cl.lmb.mediturnos.exception;
-
+package cl.lmb.mediturnos.domain.exception;
 /**
  * Se lanza cuando un medico ya alcanzo su capacidad maxima de turnos para el dia solicitado.
  */

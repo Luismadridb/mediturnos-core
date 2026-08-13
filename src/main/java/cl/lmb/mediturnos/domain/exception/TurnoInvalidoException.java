@@ -1,5 +1,4 @@
-package cl.lmb.mediturnos.exception;
-
+package cl.lmb.mediturnos.domain.exception;
 /**
  * Se lanza cuando los datos de un turno no cumplen las reglas minimas de negocio
  * (fecha en el pasado, campos obligatorios ausentes, etc.).

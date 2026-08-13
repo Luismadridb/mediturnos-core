@@ -1,4 +1,4 @@
-package cl.lmb.mediturnos.domain;
+package cl.lmb.mediturnos.domain.entity;
 
 /**
  * Ciclo de vida posible de un {@link Turno}.

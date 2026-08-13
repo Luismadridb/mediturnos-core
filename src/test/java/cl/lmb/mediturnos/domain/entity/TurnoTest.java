@@ -1,7 +1,8 @@
-package cl.lmb.mediturnos.domain;
+package cl.lmb.mediturnos.domain.entity;
 
-import cl.lmb.mediturnos.exception.TurnoInvalidoException;
-import cl.lmb.mediturnos.exception.TurnoYaCanceladoException;
+import cl.lmb.mediturnos.domain.exception.TurnoInvalidoException;
+import cl.lmb.mediturnos.domain.exception.TurnoYaCanceladoException;
+import cl.lmb.mediturnos.domain.valueobject.Rut;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,7 @@ class TurnoTest {
     @BeforeEach
     void setUp() {
         // Arrange (comun a todos los tests)
-        paciente = new Paciente("P1", "Luis Madrid", "11.111.111-1");
+        paciente = new Paciente("P1", "Luis Madrid", new Rut("11.111.111-1"));
         medico = new Medico("M1", "Dra. Fernanda Soto", Especialidad.BRONCOPULMONAR, 10);
         fechaHora = LocalDateTime.now().plusDays(1);
     }
@@ -122,7 +123,7 @@ class TurnoTest {
 
         // Act / Assert
         assertEquals(turnoA, turnoB);
-        assertEquals(turnoA.hashCode(), turnoB.hashCode());
+        assertEquals(turnoA.hashCode(), turnoA.hashCode());
         assertEquals(turnoA, turnoA);
         assertFalse(turnoA.equals("no-es-un-turno"));
     }

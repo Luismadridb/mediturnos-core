@@ -1,26 +1,24 @@
-package cl.lmb.mediturnos.domain;
+package cl.lmb.mediturnos.domain.entity;
+
+import cl.lmb.mediturnos.domain.valueobject.Rut;
 
 import java.util.Objects;
 
-/**
- * Representa a un paciente dentro del sistema de agendamiento MediTurnos.
- * Entidad de dominio pura, sin dependencias de infraestructura.
- */
 public class Paciente {
 
     private final String id;
     private final String nombreCompleto;
-    private final String rut;
+    private final Rut rut;
 
-    public Paciente(String id, String nombreCompleto, String rut) {
+    public Paciente(String id, String nombreCompleto, Rut rut) {
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("El id del paciente no puede ser nulo o vacio.");
         }
         if (nombreCompleto == null || nombreCompleto.isBlank()) {
             throw new IllegalArgumentException("El nombre del paciente no puede ser nulo o vacio.");
         }
-        if (rut == null || rut.isBlank()) {
-            throw new IllegalArgumentException("El rut del paciente no puede ser nulo o vacio.");
+        if (rut == null) {
+            throw new IllegalArgumentException("El rut del paciente es obligatorio.");
         }
         this.id = id;
         this.nombreCompleto = nombreCompleto;
@@ -35,7 +33,7 @@ public class Paciente {
         return nombreCompleto;
     }
 
-    public String getRut() {
+    public Rut getRut() {
         return rut;
     }
 
