@@ -41,7 +41,7 @@ Luego abre el reporte en: `target/site/jacoco/index.html`
 
 ## Cobertura de tests
 
-[![Cobertura JaCoCo](docs/coverage.png)](docs/coverage.png)
+![Cobertura JaCoCo](docs/coverage.png)
 
 ## Autor
 
